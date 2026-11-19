@@ -1,0 +1,26 @@
+diff --git a/kona.mk b/kona.mk
+index e4ed6cb..4b34ae5 100644
+--- a/kona.mk
++++ b/kona.mk
+@@ -179,7 +179,8 @@ PRODUCT_COPY_FILES += \
+ 
+ ifeq ($(TARGET_HAS_UDFPS),true)
+ PRODUCT_PACKAGES += \
+-    libudfpshandler
++    libudfpshandler \
++    sensors.udfps
+ 
+ $(call soong_config_set,surfaceflinger,udfps_lib,//hardware/xiaomi:libudfps_extension.xiaomi)
+ endif
+diff --git a/sepolicy/vendor/hal_sensors_default.te b/sepolicy/vendor/hal_sensors_default.te
+index 63601a4..1763eca 100644
+--- a/sepolicy/vendor/hal_sensors_default.te
++++ b/sepolicy/vendor/hal_sensors_default.te
+@@ -18,3 +18,7 @@ allow hal_sensors_default vendor_sysfs_palm_sensor:file rw_file_perms;
+ 
+ # Access to ADSP properties
+ get_prop(hal_sensors_default, vendor_adsprpc_prop)
++
++# Access to touchpanel nodes
++r_dir_file(hal_sensors_default, sysfs_touchpanel)
++allow hal_sensors_default sysfs_touchpanel:file rw_file_perms;

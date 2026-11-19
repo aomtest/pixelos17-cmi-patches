@@ -1,0 +1,22 @@
+From c924d70c8706001104e20997849b82dbe0074d36 Mon Sep 17 00:00:00 2001
+From: kdrag0n <danny@kdrag0n.dev>
+Date: Mon, 30 Oct 2023 21:42:05 -0400
+Subject: [PATCH] sm8250-common: Switch to Vulkan UI renderer
+
+Change-Id: Ide7e804f7fb4787ec04df2df294bb6f6af8b7a74
+---
+
+diff --git a/kona.mk b/kona.mk
+index e4ed6cb..53fcd22 100644
+--- a/kona.mk
++++ b/kona.mk
+@@ -198,6 +198,9 @@
+ PRODUCT_COPY_FILES += \
+     $(LOCAL_PATH)/permissions/privapp-permissions-hotword.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/privapp-permissions-hotword.xml
+ 
++# HWUI
++TARGET_USES_VULKAN := true
++
+ # IFAAService
+ PRODUCT_PACKAGES += \
+     IFAAService

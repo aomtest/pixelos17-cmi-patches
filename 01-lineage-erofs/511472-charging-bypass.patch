@@ -1,0 +1,38 @@
+From cc9608494136966c6cb22ea5fac0eb1410cff3ee Mon Sep 17 00:00:00 2001
+From: DIYgod <i@diygod.cc>
+Date: Sun, 01 Nov 2026 14:03:47 +0800
+Subject: [PATCH] sm8250-common: Use charging_bypass for charging control
+
+The kernel exposes /sys/class/qcom-battery/charging_bypass, which
+disables charging while USB keeps powering the system. Point the
+Lineage health HAL at it and enable bypass mode, so that charging
+control holds the battery at the limit instead of cycling it.
+
+No permission changes are needed: init.qti.chg_policy.sh hands every
+qcom-battery node to the system user, and the node inherits
+vendor_sysfs_battery_supply, which hal_lineage_health_default may
+write.
+
+Requires the kernel change
+https://review.lineageos.org/c/LineageOS/android_kernel_xiaomi_sm8250/+/511471
+
+Change-Id: I3ec856fac44ebfa81546e6dd38de1facddeb6175
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+
+diff --git a/kona.mk b/kona.mk
+index e4ed6cb..68a107e 100644
+--- a/kona.mk
++++ b/kona.mk
+@@ -238,7 +238,10 @@
+ PRODUCT_PACKAGES += \
+     vendor.lineage.health-service.default
+ 
+-$(call soong_config_set_bool,lineage_health,charging_control_supports_bypass,false)
++$(call soong_config_set,lineage_health,charging_control_charging_path,/sys/class/qcom-battery/charging_bypass)
++$(call soong_config_set,lineage_health,charging_control_charging_enabled,0)
++$(call soong_config_set,lineage_health,charging_control_charging_disabled,1)
++$(call soong_config_set_bool,lineage_health,charging_control_supports_bypass,true)
+ 
+ # Media configs
+ PRODUCT_PACKAGES += \

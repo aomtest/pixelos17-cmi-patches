@@ -1,0 +1,40 @@
+From afcd876af2157908814f87383678b2bd4fb6b9b6 Mon Sep 17 00:00:00 2001
+From: LuK1337 <priv.luk@gmail.com>
+Date: Mon, 16 Nov 2026 21:56:38 +0100
+Subject: [PATCH] DisplayManagerService: Don't defer unknown displays'
+ transaction
+
+Displays not yet known to WindowManager were configured through the
+default display's sync transaction, which a transition could apply
+after the display's own one, leaving e.g. a stale blank layer stack
+that DisplayDevice's cache never resends. Configure them through a
+separate transaction applied right after releasing mSyncRoot instead.
+
+Assisted-by: LLM
+Change-Id: I93fadc10fea24ce6bda3bdd5237f1a9ea05c7d76
+---
+ .../com/android/server/display/DisplayManagerService.java     | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/services/core/java/com/android/server/display/DisplayManagerService.java b/services/core/java/com/android/server/display/DisplayManagerService.java
+index e2bb1996aba46..22197223e8aba 100644
+--- a/services/core/java/com/android/server/display/DisplayManagerService.java
++++ b/services/core/java/com/android/server/display/DisplayManagerService.java
+@@ -1138,14 +1138,16 @@ private void getNonOverrideDisplayInfoInternal(int displayId, DisplayInfo outInf
+     @VisibleForTesting
+     void performTraversalInternal(SurfaceControl.Transaction t,
+             SparseArray<SurfaceControl.Transaction> displayTransactions) {
++        final SurfaceControl.Transaction unowned = new SurfaceControl.Transaction();
+         synchronized (mSyncRoot) {
+             if (!mPendingTraversal) {
+                 return;
+             }
+             mPendingTraversal = false;
+ 
+-            performTraversalLocked(t, displayTransactions);
++            performTraversalLocked(unowned, displayTransactions);
+         }
++        unowned.apply();
+ 
+         // List is self-synchronized copy-on-write.
+         for (DisplayTransactionListener listener : mDisplayTransactionListeners) {

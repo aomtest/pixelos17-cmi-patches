@@ -1,0 +1,24 @@
+From d75aa89b05feda7d6ad6195eb328ebd2126a0926 Mon Sep 17 00:00:00 2001
+From: Afifmomin <afifmomin123@gmail.com>
+Date: Wed, 18 Nov 2026 19:46:51 +0530
+Subject: [PATCH] sm8250-common: sepolicy: Fix SoundTrigger debug property typo
+
+Fix a typo in vendor.audio.soundtrigger.debug.user_id property
+context declaration.
+
+Assisted-by: LLM
+Change-Id: I2133f91d2909a5ea569ba4006ac0f6e38bd6ac19
+---
+
+diff --git a/sepolicy/vendor/property_contexts b/sepolicy/vendor/property_contexts
+index 9010b71..7566a84 100644
+--- a/sepolicy/vendor/property_contexts
++++ b/sepolicy/vendor/property_contexts
+@@ -1,6 +1,6 @@
+ # Audio
+ vendor.audio.offload.                                                                               u:object_r:vendor_audio_prop:s0
+-vendor.audio.soundtrigger.debug.urser_id                                                            u:object_r:vendor_audio_prop:s0
++vendor.audio.soundtrigger.debug.user_id                                                             u:object_r:vendor_audio_prop:s0
+ vendor.audio_hal.in_period_size                                                                     u:object_r:vendor_audio_prop:s0
+ 
+ # Bluetooth

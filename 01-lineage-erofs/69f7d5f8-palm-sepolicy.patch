@@ -1,0 +1,40 @@
+From 69f7d5f8acb220d6ce37ac64489577ae7375acea Mon Sep 17 00:00:00 2001
+From: Afifmomin <afifmomin123@gmail.com>
+Date: Fri, 13 Nov 2026 19:54:53 +0530
+Subject: [PATCH] sm8250-common: sepolicy: Move vendor_sysfs_palm_sensor
+ definition to file.te
+
+Follow LineageOS and AOSP sepolicy organization by declaring
+vendor_sysfs_palm_sensor in file.te alongside other sysfs types,
+rather than inside hal_sensors_default.te.
+
+Assisted-by: LLM
+Change-Id: Ic3f4b8c09668a977b72d658ca5121c7acd84e60e
+Signed-off-by: Afifmomin <afifmomin123@gmail.com>
+---
+ sepolicy/vendor/file.te                | 2 ++
+ sepolicy/vendor/hal_sensors_default.te | 1 -
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/sepolicy/vendor/file.te b/sepolicy/vendor/file.te
+index 7ade1e2e3..c72750e2d 100644
+--- a/sepolicy/vendor/file.te
++++ b/sepolicy/vendor/file.te
+@@ -20,4 +20,6 @@ type vendor_public_adsprpcd_file, file_type;
+ 
+ type vendor_sensor_log_data_file, file_type, data_file_type;
+ 
++type vendor_sysfs_palm_sensor, fs_type, sysfs_type;
++
+ type vendor_thermal_data_file, file_type, data_file_type;
+diff --git a/sepolicy/vendor/hal_sensors_default.te b/sepolicy/vendor/hal_sensors_default.te
+index 63601a4cd..daa18cbe4 100644
+--- a/sepolicy/vendor/hal_sensors_default.te
++++ b/sepolicy/vendor/hal_sensors_default.te
+@@ -1,6 +1,5 @@
+ # Access to the audio socket
+ unix_socket_connect(hal_sensors_default, vendor_audio, hal_audio_default)
+-type vendor_sysfs_palm_sensor, fs_type, sysfs_type;
+ 
+ allow hal_sensors_default vendor_audio_socket:sock_file rw_file_perms;
+ 

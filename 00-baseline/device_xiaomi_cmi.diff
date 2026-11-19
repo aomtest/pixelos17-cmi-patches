@@ -1,0 +1,82 @@
+diff --git a/AndroidProducts.mk b/AndroidProducts.mk
+index c0d86e5..df297ee 100644
+--- a/AndroidProducts.mk
++++ b/AndroidProducts.mk
+@@ -5,4 +5,7 @@
+ #
+ 
+ PRODUCT_MAKEFILES := \
+-    $(LOCAL_DIR)/lineage_cmi.mk
++    $(LOCAL_DIR)/custom_cmi.mk
++
++COMMON_LUNCH_CHOICES := \
++    custom_cmi-cp2a-userdebug
+diff --git a/custom_cmi.mk b/custom_cmi.mk
+index f20cd64..ec13ace 100644
+--- a/custom_cmi.mk
++++ b/custom_cmi.mk
+@@ -9,12 +9,12 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
+ 
+ # Inherit some common Lineage stuff.
+-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
++$(call inherit-product, vendor/custom/config/common_full_phone.mk)
+ 
+ # Inherit from cmi device
+ $(call inherit-product, device/xiaomi/cmi/device.mk)
+ 
+-PRODUCT_NAME := lineage_cmi
++PRODUCT_NAME := custom_cmi
+ PRODUCT_DEVICE := cmi
+ PRODUCT_MANUFACTURER := Xiaomi
+ PRODUCT_BRAND := Xiaomi
+diff --git a/device.mk b/device.mk
+index c26d284..e66cc15 100644
+--- a/device.mk
++++ b/device.mk
+@@ -57,10 +57,18 @@ PRODUCT_PACKAGES += \
+ 
+ $(call soong_config_set,lineage_powershare,powershare_path,/sys/class/power_supply/wireless/reverse_chg_mode)
+ 
++# Audio
++PRODUCT_PACKAGES += \
++    DSPVolumeSynchronizer
++
+ # Rootdir
+ PRODUCT_PACKAGES += \
+     init.device.rc
+ 
++# Sensors
++PRODUCT_COPY_FILES += \
++    $(LOCAL_PATH)/configs/sensors/hals.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/hals.conf
++
+ # Soong namespaces
+ PRODUCT_SOONG_NAMESPACES += \
+     $(LOCAL_PATH)
+diff --git a/proprietary-files.txt b/proprietary-files.txt
+index 3dea993..e61e85e 100644
+--- a/proprietary-files.txt
++++ b/proprietary-files.txt
+@@ -409,7 +409,6 @@ vendor/etc/init/init.vendor.sensors.rc
+ vendor/etc/init/vendor.qti.hardware.sensorscalibrate@1.0-service.rc
+ vendor/etc/init/vendor.sensors.qti.rc
+ vendor/etc/init/vendor.sensors.sscrpcd.rc
+-vendor/etc/sensors/hals.conf
+ vendor/lib64/hw/vendor.qti.hardware.sensorscalibrate@1.0-impl.so
+ vendor/lib64/libnotifyaudiohal.so
+ vendor/lib64/libsensorcal.so
+diff --git a/rro_overlays/FrameworkResOverlayDevice/res/values/config.xml b/rro_overlays/FrameworkResOverlayDevice/res/values/config.xml
+index 36f0771..0e38370 100644
+--- a/rro_overlays/FrameworkResOverlayDevice/res/values/config.xml
++++ b/rro_overlays/FrameworkResOverlayDevice/res/values/config.xml
+@@ -442,8 +442,8 @@
+     <!-- If true, the display will be shifted around in ambient mode. -->
+     <bool name="config_enableBurnInProtection">true</bool>
+ 
+-    <!-- How long it takes for the HW to start illuminating after the illumination is requested. -->
+-    <integer name="config_udfps_illumination_transition_ms">0</integer>
++    <!-- Type of the udfps long press sensor. Empty if long press is not supported. -->
++    <string name="config_dozeUdfpsLongPressSensorType" translatable="false">org.lineageos.sensor.udfps</string>
+ 
+     <!-- The bounding path of the cutout region of the main built-in display.
+          Must either be empty if there is no cutout region, or a string that is parsable by
